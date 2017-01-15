@@ -1,0 +1,11 @@
+{
+	"MYSQL_HOST": "localhost",
+	"MYSQL_USER": "root",
+    "MYSQL_PASSWD": "123456",
+    "data": {
+        "仙五前修改": {
+            "database": "Pal5Q_Diy",
+            "recent_crawl": "2017-1-15 16:52:00"
+        }
+    }
+}
