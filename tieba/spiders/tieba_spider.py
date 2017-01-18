@@ -4,16 +4,14 @@ import scrapy
 import json
 from tieba.items import ThreadItem, PostItem, CommentItem
 import helper
+import time
 
 class TiebaSpider(scrapy.Spider):
     name = "tieba"
-    up_to_date = False #确认更新信息都已爬完
+    max_page = 999
     
     def parse(self, response): #forum parser
-
         for sel in response.xpath('//li[contains(@class, "j_thread_list")]'):
-            if self.up_to_date:
-                return
             data = json.loads(sel.xpath('@data-field').extract_first())
             item = ThreadItem()
             item['id'] = data['id']
@@ -24,16 +22,19 @@ class TiebaSpider(scrapy.Spider):
                 item['good'] = False
             item['title'] = sel.xpath('.//div[contains(@class, "threadlist_title")]/a/text()').extract_first()
             yield item
-            
-
+            meta = {'thread_id': data['id'], 'page': 1}
+            #时间更新由整个thread而定
+            url = 'http://tieba.baidu.com/p/%d' % data['id']
+            yield scrapy.Request(url, callback = self.parse_post,  meta = meta)
         next_page = response.xpath('//a[@class="next pagination-item "]/@href')
         if next_page:
-            yield self.make_requests_from_url(next_page.extract_first())
+            self.max_page -= 1
+            if self.max_page > 0:
+                yield self.make_requests_from_url(next_page.extract_first())
             
-    def parse_post(self, response):
+    def parse_post(self, response): 
+        meta = response.meta
         for floor in response.xpath("//div[contains(@class, 'l_post')]"):
-            #from scrapy.shell import inspect_response
-            #inspect_response(response, self)
             if not helper.is_ad(floor):
                 data = json.loads(floor.xpath("@data-field").extract_first())
                 item = PostItem()
@@ -42,71 +43,37 @@ class TiebaSpider(scrapy.Spider):
                 item['comment_num'] = data['content']['comment_num']
                 content = floor.xpath(".//div[contains(@class,'j_d_post_content')]").extract_first()
                 #以前的帖子, data-field里面没有content
-                item['content'] = helper.parse_content(content)
+                item['content'] = helper.parse_content(content, True)
                 #以前的帖子, data-field里面没有thread_id
-                item['thread_id'] = helper.get_threadid(response.url)
+                item['thread_id'] = meta['thread_id']
                 item['floor'] = data['content']['post_no']
                 #只有以前的帖子, data-field里面才有date
-                try:
+                if 'time' in data['content'].keys():
                     item['time'] = data['content']['date']
                     #只有以前的帖子, data-field里面才有date
-                except:
+                else:
                     item['time'] = floor.xpath(".//span[@class='tail-info']")\
                     .re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}')
-                
                 yield item
+
+        url = "http://tieba.baidu.com/p/totalComment?tid=%d&fid=1&pn=%d" % (meta['thread_id'], meta['page'])
+        yield scrapy.Request(url, callback = self.parse_comment, meta = meta)
         next_page = response.xpath(u".//ul[@class='l_posts_num']//a[text()='下一页']/@href")
         if next_page:
+            meta['page'] += 1
             url = response.urljoin(next_page.extract_first())
-            yield self.make_requests_from_url(url)
+            yield scrapy.Request(url, callback = self.parse_post, meta = meta)
 
-
-            
-class PostSpider(scrapy.Spider):
-    name = "post"
-            
-    def parse(self, response):
-        for floor in response.xpath("//div[contains(@class, 'l_post')]"):
-            #from scrapy.shell import inspect_response
-            #inspect_response(response, self)
-            if not helper.is_ad(floor):
-                data = json.loads(floor.xpath("@data-field").extract_first())
-                item = PostItem()
-                item['id'] = data['content']['post_id']
-                item['author'] = data['author']['user_name']
-                item['comment_num'] = data['content']['comment_num']
-                content = floor.xpath(".//div[contains(@class,'j_d_post_content')]").extract_first()
-                #以前的帖子, data-field里面没有content
-                item['content'] = helper.parse_content(content)
-                #以前的帖子, data-field里面没有thread_id
-                item['thread_id'] = helper.get_threadid(response.url)
-                item['floor'] = data['content']['post_no']
-                #只有以前的帖子, data-field里面才有date
-                try:
-                    item['time'] = data['content']['date']
-                    #只有以前的帖子, data-field里面才有date
-                except:
-                    item['time'] = floor.xpath(".//span[@class='tail-info']")\
-                    .re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}')
-                
+    def parse_comment(self, response):
+        comment_list = json.loads(response.body)['data']['comment_list']
+        for value in comment_list.values():
+            comments = value['comment_info']
+            for comment in comments:
+                item = CommentItem()
+                item['id'] = comment['comment_id']
+                item['author'] = comment['username']
+                item['post_id'] = comment['post_id']
+                item['content'] = helper.parse_content(comment['comment'], False)
+                item['time'] = comment['now_time']
                 yield item
-        next_page = response.xpath(u".//ul[@class='l_posts_num']//a[text()='下一页']/@href")
-        if next_page:
-            url = response.urljoin(next_page.extract_first())
-            yield self.make_requests_from_url(url)
-            
-            
-class CommentSpider(scrapy.Spider):
-    name = "comment"
-        
-    def parse(self, response):
-        for floor in response.xpath("//li[contains(@class, 'lzl_single_post')]"): #各个楼层
-            data = json.loads(floor.xpath("@data-field").extract_first())
-            item = CommentItem()
-            item['id'] = data['spid']
-            item['author'] = data['user_name']
-            item['post_id'] = helper.get_postid(response.url)
-            span = floor.xpath(".//span[@class='lzl_content_main']").extract_first()
-            item['content'] = helper.parse_content(span)
-            item['time'] = floor.xpath(".//span[@class='lzl_time']/text()").extract_first()
-            yield item            
+         
