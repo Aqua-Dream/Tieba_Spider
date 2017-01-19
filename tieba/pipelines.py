@@ -35,6 +35,7 @@ class TiebaPipeline(object):
             passwd=settings['MYSQL_PASSWD'],
             charset='utf8mb4',
             cursorclass = MySQLdb.cursors.DictCursor,
+            init_command = 'set foreign_key_checks=0' #异步容易冲突
         )
         
     def open_spider(self, spider):
