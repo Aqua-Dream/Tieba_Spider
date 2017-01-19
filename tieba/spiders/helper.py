@@ -52,14 +52,14 @@ def is_br(s):
 def is_img(s):
     # 处理了部分表情
     if s.name == 'img':
-        return emotion.get_text()
+        src = unicode(s.get('src'))
+        return emotion.get_text(src)
     return False
 
 def is_video(s):
     t = unicode(s.get('class'))
     if 'video' in t:
-        url = s.find('a').get('href').strip()
-        assert(url)
+        url = s.find('a').get('href')
         return ' ' + getJumpUrl(url) + ' '
     return False
 

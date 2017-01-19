@@ -17,25 +17,24 @@ Scrapy 1.3.0
 MySQL-python (1.2.5)
 
 ## 使用方法
-在tieba目录下有个settings.py文件，必须先在其中配置好数据库的域名、用户名和密码。
+先打开config.json文件，在其中配置好数据库的域名、用户名和密码。
 ```
-python run.py 贴吧名 数据库名
+scrapy run <贴吧名> <数据库名> <-p 页码>
 ```
-其中贴吧名不含末尾的“吧”字，而数据库名则是要存入的数据库名字，数据库在爬取前会被创建。例如
+其中贴吧名不含末尾的“吧”字，而数据库名则是要存入的数据库名字，数据库在爬取前会被创建，-p选项可以设置要爬取的前X页(每页50个帖子)，若不设置则全爬。例如
 ```
-python run.py 仙五前修改 Pal5Q_Diy
+scrapy run 仙五前修改 Pal5Q_Diy
 ```
-若在settings.py里面已经配置好贴吧名和数据库名，则可以忽略，例如
+若在config.json里面已经配置好贴吧名和对应数据库名，则可以忽略数据库名，例如
 ```
-python run.py
+scrapy run 仙五前修改
 ```
-而在settings.py里面
-```python
-TIEBA_NAME = u'仙五前修改'  #name of tieba to crawl
-MYSQL_DBNAME = 'Pal5Q_Diy'  #name of database to store data
+若不写参数，则爬取config.json里面DEFAULT的数据库，例如
+```
+scrapy run
 ```
 
 ## 数据库结构
-
+To be continued...
 
 

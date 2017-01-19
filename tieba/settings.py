@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
 
-TIEBA_NAME = u'仙五前修改'  #name of tieba to crawl
-MYSQL_DBNAME = 'Pal5Q_Diy'  #name of database to store data
-
-
-# start MySQL database configure setting
-MYSQL_HOST = 'localhost'    #host
-MYSQL_USER = 'root'         #user name
-MYSQL_PASSWD = '`fmyl597013296'     #password
-# end of MySQL database configure setting
-
-
 BOT_NAME = 'tieba'
 
 SPIDER_MODULES = ['tieba.spiders']

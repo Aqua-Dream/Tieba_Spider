@@ -9,6 +9,7 @@ from twisted.enterprise import adbapi
 import MySQLdb
 import MySQLdb.cursors
 from urllib import quote
+from tieba.items import ThreadItem, PostItem, CommentItem
 
 class TiebaPipeline(object):
     @classmethod
@@ -16,7 +17,6 @@ class TiebaPipeline(object):
         return cls(settings)
 
     def __init__(self, settings):
-        
         dbname = settings['MYSQL_DBNAME']
         tbname = settings['TIEBA_NAME']
         if not dbname.strip():
@@ -38,37 +38,20 @@ class TiebaPipeline(object):
         )
         
     def open_spider(self, spider):
-        if spider.name == 'thread':
-            spider.start_urls = ["http://tieba.baidu.com/f?kw=" +\
+        spider.start_urls = ["http://tieba.baidu.com/f?kw=" +\
                 quote(self.settings['TIEBA_NAME'])]
-        elif spider.name == "post":
-            results = self.dbpool._runInteraction(self.dbpool._runQuery, 'select id from thread;')
-            #从源码知，带下划线的是阻塞的
-            url = 'http://tieba.baidu.com/p/%d'
-            spider.start_urls = (url % row['id'] for row in results)
-        elif spider.name == "comment":
-            # sql = 'select id, thread_id, comment_num from post;'
-            sql = 'select id from post;'
-            results = self.dbpool._runInteraction(self.dbpool._runQuery, sql)
-            def url_generator(results):
-                url = 'http://tieba.baidu.com/p/totalComment?tid=4902778604&fid=1&pn=2'
-                for result in results:
-                    (pid, tid, cnum) = (result['id'], result['thread_id'], result['comment_num'])
-                    pn = (cnum + 9) / 10 # 10回复每页
-                    for i in range(pn):
-                        yield url % (tid, pid, i + 1)
-            
-            spider.start_urls = url_generator(results)   
-        else:
-            raise ValueError("Undefined spider!")
+        spider.max_page = self.settings['MAX_PAGE']
         
+    def close_spider(self, spider):
+        self.settings['SIMPLE_LOG'].log()
+    
     def process_item(self, item, spider):
         _conditional_insert = {
             'thread': self.insert_thread, 
             'post': self.insert_post, 
             'comment': self.insert_comment
         }
-        query = self.dbpool.runInteraction(_conditional_insert[spider.name], item)
+        query = self.dbpool.runInteraction(_conditional_insert[item.name], item)
         query.addErrback(self._handle_error, item, spider)
         return item
         
@@ -96,4 +79,4 @@ class TiebaPipeline(object):
     #错误处理方法
     def _handle_error(self, fail, item, spider):
         spider.logger.error('Insert to database error: %s \
-        When dealing with item: %s' %(fail, item))
+        when dealing with item: %s' %(fail, item))

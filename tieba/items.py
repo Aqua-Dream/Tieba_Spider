@@ -9,6 +9,7 @@ import scrapy
 
 
 class ThreadItem(scrapy.Item):
+    name = 'thread'
     id = scrapy.Field()
     title = scrapy.Field()
     author = scrapy.Field()
@@ -16,6 +17,7 @@ class ThreadItem(scrapy.Item):
     good = scrapy.Field()
     
 class PostItem(scrapy.Item):
+    name = 'post'
     id = scrapy.Field()
     floor = scrapy.Field()
     author = scrapy.Field()
@@ -25,6 +27,7 @@ class PostItem(scrapy.Item):
     thread_id = scrapy.Field()
 
 class CommentItem(scrapy.Item):
+    name = 'comment'
     id = scrapy.Field()
     author = scrapy.Field()
     content = scrapy.Field()
