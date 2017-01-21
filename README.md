@@ -3,13 +3,20 @@
 
 ## 系统及依赖参考
 Ubuntu 14.04.4 64-bit
+
 Python 2.7.6
+
 mysql  Ver 14.14 Distrib 5.5.53
 
+
 lxml (3.7.2)
+
 beautifulsoup4 (4.5.3)
+
 Twisted (16.6.0)
+
 Scrapy 1.3.0
+
 MySQL-python (1.2.5)
 
 ## 使用方法
