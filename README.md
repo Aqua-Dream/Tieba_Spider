@@ -6,8 +6,7 @@ Ubuntu 14.04.4 64-bit
 
 Python 2.7.6
 
-mysql  Ver 14.14 Distrib 5.5.53
-
+mysql Ver 14.14 Distrib 5.5.53
 
 lxml (3.7.2)
 
@@ -20,13 +19,13 @@ Scrapy 1.3.0
 MySQL-python (1.2.5)
 
 ## 使用方法
-先打开config.json文件，在其中配置好数据库的域名、用户名和密码。
+先打开config.json文件，在其中配置好数据库的域名、用户名和密码。接着直接运行命令即可：
 ```
 scrapy run <贴吧名> <数据库名> <-p 页码>
 ```
 其中贴吧名不含末尾的“吧”字，而数据库名则是要存入的数据库名字，数据库在爬取前会被创建，-p选项可以设置要爬取的前X页(每页50个帖子)，若不设置则全爬。例如
 ```
-scrapy run 仙五前修改 Pal5Q_Diy
+scrapy run 仙五前修改 Pal5Q_Diy -p 100
 ```
 若在config.json里面已经配置好贴吧名和对应数据库名，则可以忽略数据库名，例如
 ```
@@ -52,7 +51,9 @@ scrapy run
 
 
  - post
+
 为各楼层的一些基本信息，包括1楼。
+
 |属性|类型|备注|
 |-|
 |id|BIGINT(12)|楼层也有对应ID|
@@ -66,6 +67,7 @@ scrapy run
 
  - comment
 楼中楼的一些信息。
+
 |属性|类型|备注|
 |-|
 |id|BIGINT(12)|楼中楼也有ID，且和楼层一样|
