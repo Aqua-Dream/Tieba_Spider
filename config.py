@@ -24,12 +24,12 @@ class config:
             f.write(s)
 
 class log:
-    log_path = 'log.csv'
+    log_path = 'spider.log'
     
     def __init__(self, tbname, dbname):
         if not os.path.isfile(self.log_path):
             with open(self.log_path, 'w') as f:
-                csvwriter = csv.writer(f)
+                csvwriter = csv.writer(f, delimiter='\t')
                 csvwriter.writerow(['start_time','end_time','elapsed_time','tieba_name','database_name'])
         self.tbname = tbname
         self.dbname = dbname
@@ -40,9 +40,9 @@ class log:
         elapsed_time = '%.4g' % (end_time - self.start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.start_time))
         end_time = time.strftime("%m-%d %H:%M:%S", time.localtime(end_time))
-        tbname = self.tbname.decode('utf8').encode('gbk') #向excel低头
+        tbname = self.tbname#换回uft8 .decode('utf8').encode('gbk') #向excel低头
         with open(self.log_path, 'a') as f:
-            csvwriter = csv.writer(f)
+            csvwriter = csv.writer(f, delimiter='\t')
             csvwriter.writerow([start_time, end_time, elapsed_time, tbname, self.dbname])
         
         
