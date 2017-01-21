@@ -4,6 +4,10 @@ import re
 import urllib2
 from bs4 import BeautifulSoup
 import emotion
+import warnings 
+
+warnings.filterwarnings('ignore', message = "looks like a filename, not markup") 
+# 传入纯url内容的时候会被误解
 
 def is_ad(s): #判断楼层是否为广告
     ad = s.xpath(u".//span[contains(text(), '广告')]")

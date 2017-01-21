@@ -8,7 +8,7 @@ import time
 
 class TiebaSpider(scrapy.Spider):
     name = "tieba"
-    max_page = 9999
+    max_page = 9999 #modified by pipelines (open_spider)
     
     def parse(self, response): #forum parser
         for sel in response.xpath('//li[contains(@class, "j_thread_list")]'):
