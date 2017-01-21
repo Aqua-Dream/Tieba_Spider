@@ -84,9 +84,13 @@ scrapy run
 
 ## 参考文献
 [Scrapy 1.0 文档][1]
+
 [Scrapy 源代码][2]
+
 [Beautiful Soup的用法][3]
+
 [Ubuntu/Debian 安装lxml的正确方式][4]
+
 [Twisted adbapi 源代码][5]
 
 有什么问题或建议欢迎到[我的主页][6]留言~
