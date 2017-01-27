@@ -43,7 +43,7 @@ scrapy run
 
 |属性|类型|备注|
 |----|---|----|
-|id|BIGINT(12)|"http://tieba.baidu.com/p/4778655068"的ID就是4778655068|
+|id|BIGINT(12)|"http://tieba.baidu.com/p/4778655068" 的ID就是4778655068|
 |title|VARCHAR(100)| |
 |author|VARCHAR(30)| |
 |reply_num|INT(4)|回复数量(含楼中楼, 不含1楼)|
