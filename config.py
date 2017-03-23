@@ -26,24 +26,35 @@ class config:
 class log:
     log_path = 'spider.log'
     
-    def __init__(self, tbname, dbname):
+    def __init__(self, tbname, dbname, begin_page, good_only, see_lz):
         if not os.path.isfile(self.log_path):
             with open(self.log_path, 'w') as f:
                 csvwriter = csv.writer(f, delimiter='\t')
-                csvwriter.writerow(['start_time','end_time','elapsed_time','tieba_name','database_name'])
+                csvwriter.writerow(['start_time','end_time','elapsed_time','tieba_name','database_name', 'pages', 'etc'])
         self.tbname = tbname
         self.dbname = dbname
+        self.begin_page = begin_page
+        etc = []
+        if good_only:
+            etc.append('good_only')
+        if see_lz:
+            etc.append('see_lz')
+        self.etc = '&'.join(etc)
+        if not self.etc:
+            self.etc = "None"
         self.start_time = time.time()
         
-    def log(self):
+    def log(self, end_page):
         end_time = time.time()
         elapsed_time = '%.4g' % (end_time - self.start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.start_time))
-        end_time = time.strftime("%m-%d %H:%M:%S", time.localtime(end_time))
-        tbname = self.tbname#换回uft8 .decode('utf8').encode('gbk') #向excel低头
+        end_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(end_time))
+        tbname = self.tbname
+
+        pages = '%d~%d'%(self.begin_page, end_page) if end_page >= self.begin_page else 'None'
         with open(self.log_path, 'a') as f:
             csvwriter = csv.writer(f, delimiter='\t')
-            csvwriter.writerow([start_time, end_time, elapsed_time, tbname, self.dbname])
+            csvwriter.writerow([start_time, end_time, elapsed_time, tbname, self.dbname, pages, self.etc])
         
         
 def init_database(host, user, passwd, dbname):
@@ -71,4 +82,6 @@ def init_database(host, user, passwd, dbname):
     db.commit()
     db.close()
     warnings.resetwarnings()
-    
+
+    warnings.filterwarnings('ignore', message = ".*looks like a ") 
+    # bs.get_text传入纯url内容的时候会被误解
