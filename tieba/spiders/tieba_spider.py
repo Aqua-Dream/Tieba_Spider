@@ -8,7 +8,10 @@ import time
 
 class TiebaSpider(scrapy.Spider):
     name = "tieba"
-    max_page = 9999 #modified by pipelines (open_spider)
+    cur_page = 1    #modified by pipelines (open_spider)
+    end_page = 9999
+    filter = None
+    see_lz = False
     
     def parse(self, response): #forum parser
         for sel in response.xpath('//li[contains(@class, "j_thread_list")]'):
@@ -21,14 +24,20 @@ class TiebaSpider(scrapy.Spider):
             if not item['good']:
                 item['good'] = False
             item['title'] = sel.xpath('.//div[contains(@class, "threadlist_title")]/a/text()').extract_first()
+            if self.filter and not self.filter(item["id"], item["title"], item['author'], item['reply_num'], item['good']):
+                continue
+            #filter过滤掉的帖子及其回复均不存入数据库
+                
             yield item
             meta = {'thread_id': data['id'], 'page': 1}
             url = 'http://tieba.baidu.com/p/%d' % data['id']
+            if self.see_lz:
+                url += '?see_lz=1'
             yield scrapy.Request(url, callback = self.parse_post,  meta = meta)
         next_page = response.xpath('//a[@class="next pagination-item "]/@href')
+        self.cur_page += 1
         if next_page:
-            self.max_page -= 1
-            if self.max_page > 0:
+            if self.cur_page <= self.end_page:
                 yield self.make_requests_from_url(next_page.extract_first())
             
     def parse_post(self, response): 
@@ -59,6 +68,8 @@ class TiebaSpider(scrapy.Spider):
                 yield item
         if has_comment:
             url = "http://tieba.baidu.com/p/totalComment?tid=%d&fid=1&pn=%d" % (meta['thread_id'], meta['page'])
+            if self.see_lz:
+                url += '&see_lz=1'
             yield scrapy.Request(url, callback = self.parse_comment, meta = meta)
         next_page = response.xpath(u".//ul[@class='l_posts_num']//a[text()='下一页']/@href")
         if next_page:

@@ -39,12 +39,19 @@ class TiebaPipeline(object):
         )
         
     def open_spider(self, spider):
-        spider.start_urls = ["http://tieba.baidu.com/f?kw=" +\
-                quote(self.settings['TIEBA_NAME'])]
-        spider.max_page = self.settings['MAX_PAGE']
+        spider.cur_page = begin_page = self.settings['BEGIN_PAGE']
+        spider.end_page = self.settings['END_PAGE']
+        spider.filter = self.settings['FILTER']
+        spider.see_lz = self.settings['SEE_LZ']
+        start_url = "http://tieba.baidu.com/f?kw=%s&pn=%d" \
+                %(quote(self.settings['TIEBA_NAME']), 50 * (begin_page - 1))
+        if self.settings['GOOD_ONLY']:
+            start_url += '&tab=good'
+        
+        spider.start_urls = [start_url]
         
     def close_spider(self, spider):
-        self.settings['SIMPLE_LOG'].log()
+        self.settings['SIMPLE_LOG'].log(spider.cur_page - 1)
     
     def process_item(self, item, spider):
         _conditional_insert = {
