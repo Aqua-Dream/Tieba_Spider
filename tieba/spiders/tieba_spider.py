@@ -59,7 +59,7 @@ class TiebaSpider(scrapy.Spider):
                 item['thread_id'] = meta['thread_id']
                 item['floor'] = data['content']['post_no']
                 #只有以前的帖子, data-field里面才有date
-                if 'time' in data['content'].keys():
+                if 'date' in data['content'].keys():
                     item['time'] = data['content']['date']
                     #只有以前的帖子, data-field里面才有date
                 else:
