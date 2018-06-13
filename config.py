@@ -7,20 +7,19 @@ import MySQLdb
 import warnings
 import time
 import csv
+from io import open
 
 class config:
     config_path = 'config.json'
     config = None
 
     def __init__(self):
-        with open(self.config_path, 'r') as f:
+        with open(self.config_path, 'r', encoding='utf8') as f:
             self.config = json.loads(f.read())
             # loads后若有中文 为unicode
     def save(self):
         with open(self.config_path, 'wb') as f:
-            s = json.dumps(self.config, indent=4, ensure_ascii=False)
-            if isinstance(s, unicode):
-                s = s.encode('utf8')
+            s = json.dumps(self.config, indent=4, ensure_ascii=False).encode('utf8')
             f.write(s)
 
 class log:
@@ -28,9 +27,12 @@ class log:
     
     def __init__(self, tbname, dbname, begin_page, good_only, see_lz):
         if not os.path.isfile(self.log_path):
-            with open(self.log_path, 'w') as f:
-                csvwriter = csv.writer(f, delimiter='\t')
-                csvwriter.writerow(['start_time','end_time','elapsed_time','tieba_name','database_name', 'pages', 'etc'])
+            with open(self.log_path, 'wb') as f:
+                row = ['start_time','end_time','elapsed_time','tieba_name','database_name', 'pages', 'etc']
+                s = '\t'.join(row) + '\n'
+                if not isinstance(s, bytes):
+                    s = s.encode('utf8')
+                f.write(s)
         self.tbname = tbname
         self.dbname = dbname
         self.begin_page = begin_page
@@ -52,20 +54,22 @@ class log:
         tbname = self.tbname
 
         pages = '%d~%d'%(self.begin_page, end_page) if end_page >= self.begin_page else 'None'
-        with open(self.log_path, 'a') as f:
-            csvwriter = csv.writer(f, delimiter='\t')
-            csvwriter.writerow([start_time, end_time, elapsed_time, tbname, self.dbname, pages, self.etc])
+        with open(self.log_path, 'ab') as f:
+            row = [start_time, end_time, elapsed_time, tbname, self.dbname, pages, self.etc]
+            s = '\t'.join(row) + '\n'
+            if not isinstance(s, bytes):
+                s = s.encode('utf8')
+            f.write(s)
         
         
 def init_database(host, user, passwd, dbname):
-    warnings.filterwarnings('ignore', message = "Table.*already exists") 
-    warnings.filterwarnings('ignore', message = "Can't create.*database exists") 
-    #都说了if not exists还报警告 = =
+    warnings.filterwarnings('ignore', message = ".*exists.*")  
+    warnings.filterwarnings('ignore', message = ".*looks like a.*") 
     db = MySQLdb.connect(host, user, passwd)
     tx = db.cursor()
     tx.execute('set names utf8mb4')
     tx.execute('create database if not exists `%s`default charset utf8mb4\
-    default collate utf8mb4_general_ci;' % MySQLdb.escape_string(dbname))
+    default collate utf8mb4_general_ci;' % MySQLdb.escape_string(dbname).decode("utf8"))
     #要用斜引号不然报错
     #万恶的MySQLdb会自动加上单引号 结果导致错误
     db.select_db(dbname)
@@ -81,7 +85,3 @@ def init_database(host, user, passwd, dbname):
         PRIMARY KEY (id), FOREIGN KEY (post_id) REFERENCES post(id)) CHARSET=utf8mb4;")
     db.commit()
     db.close()
-    warnings.resetwarnings()
-
-    warnings.filterwarnings('ignore', message = ".*looks like a ") 
-    # bs.get_text传入纯url内容的时候会被误解

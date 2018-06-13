@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import re
-import urllib2
+from six.moves.urllib import request
 from bs4 import BeautifulSoup
-import emotion
+from . import emotion
 
 
 def is_ad(s): #判断楼层是否为广告
@@ -15,10 +15,11 @@ def parse_content(content, is_post):
     if not content or not content.strip():
         return None
     content = content.replace('\r', '\n') #古老的帖子会出现奇怪的\r
-    s = BeautifulSoup(content, 'lxml')
+    s = BeautifulSoup(content, 'lxml').html.body
     if is_post:
         s = s.div  #post 外层有个div
-
+    else:
+        s = s.p
     l = list(s.children)
     for i in range(len(l)):
         parse_func = (is_str, is_br, is_img, is_video, other_case)
@@ -30,7 +31,6 @@ def parse_content(content, is_post):
             if ret is not False: 
                 l[i] = ret
                 break
-
     return strip_blank(''.join(l))
 
 def strip_blank(s): #按个人喜好去掉空白字符
@@ -43,7 +43,7 @@ def is_str(s):
     if s.name: 
         return False
     #NavigableString类型需要手动转换下
-    return unicode(s)
+    return str(s)
 
 def is_br(s):
     if s.name == 'br':
@@ -53,12 +53,12 @@ def is_br(s):
 def is_img(s):
     # 处理了部分表情
     if s.name == 'img':
-        src = unicode(s.get('src'))
+        src = str(s.get('src'))
         return emotion.get_text(src)
     return False
 
 def is_video(s):
-    t = unicode(s.get('class'))
+    t = str(s.get('class'))
     if 'video' in t:
         url = s.find('a').get('href')
         return ' ' + getJumpUrl(url) + ' '
@@ -73,15 +73,15 @@ def other_case(s):
 
 # 发送请求到 jump.bdimg.com/.. 来获取真实链接
 # 阻止302跳转后可以大大节省时间 
-class RedirctHandler(urllib2.HTTPRedirectHandler):      
+
+class RedirctHandler(request.HTTPRedirectHandler):      
     def http_error_302(self, req, fp, code, msg, headers):  
         raise Exception(headers.getheaders('location')[0])
 
 def getJumpUrl(url):    
-    req = urllib2.Request(url)    
-    debug_handler = urllib2.HTTPHandler()    
-    opener = urllib2.build_opener(debug_handler, RedirctHandler)      
+    req = request.Request(url)  
+    opener = request.build_opener(RedirctHandler())      
     try:    
         opener.open(url)
-    except Exception, e:
-        return unicode(e)
+    except Exception as e:
+        return str(e)

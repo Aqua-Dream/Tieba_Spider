@@ -1,24 +1,22 @@
 # Tieba_Spider
+[Readme(EN)](README_en.md)
+
 贴吧爬虫。更新后请先删除原有的日志`spider.log`。
+
+2018.6.13更新：新增支持python 3。请卸载原来的python库`mysql-python`，改为使用`mysqlclient`。
 
 2017.3.23更新：修改了页选项参数形式，增加了只看楼主、只爬精品和自定义过滤帖子功能。
 
-## 系统及依赖参考
-Ubuntu 14.04.4 64-bit
+## 依赖参考
+Python >= 2.7 || >= 3.5
 
-Python 2.7.6
+mysql >= 5.5
 
-mysql Ver 14.14 Distrib 5.5.53
+beautifulsoup4 >= 4.6.0
 
-lxml (3.7.2)
+scrapy >= 1.5
 
-beautifulsoup4 (4.5.3)
-
-Twisted (16.6.0)
-
-Scrapy 1.3.0
-
-MySQL-python (1.2.5)
+mysqlclient >= 1.3.10
 
 ## 使用方法
 先打开config.json文件，在其中配置好数据库的域名、用户名和密码。接着直接运行命令即可：
@@ -29,6 +27,8 @@ scrapy run <贴吧名> <数据库名> <选项>
 ```
 scrapy run 仙五前修改 Pal5Q_Diy
 ```
+但若要在控制台输入中文(非ASCII字符)，请确保控制台编码为UTF8。
+
 若在config.json里面已经配置好贴吧名和对应数据库名，则可以忽略数据库名。若忽略贴吧名，则爬取config.json里面DEFAULT的数据库。
 
 **特别提醒** 任务一旦断开，不可继续进行。因此SSH打开任务时，请保证不要断开连接，或者考虑使用后台任务或者screen命令等。
@@ -129,12 +129,14 @@ scrapy run 仙剑五外传 -gs -p 5 12 -f thread_filter
 
 [Twisted adbapi 源代码][5]
 
-有什么问题或建议欢迎到[我的主页][6]留言~
+[mysql升级8.0后遇到的坑][6]
 
+有什么问题或建议欢迎到[我的主页][7]留言~
 
   [1]: http://scrapy-chs.readthedocs.io/zh_CN/1.0/
   [2]: https://coding.net/u/fmyl/p/scrapy
   [3]: https://cuiqingcai.com/1319.html
   [4]: http://www.cnblogs.com/numbbbbb/p/3434519.html
   [5]: https://github.com/twisted/twisted/blob/twisted-16.5.0/src/twisted/enterprise/adbapi.py
-  [6]: http://aqua.hk.cn
+  [6]: https://www.shiqidu.com/d/358
+  [7]: https://aqua.hk.cn/Programming/%E7%99%BE%E5%BA%A6%E8%B4%B4%E5%90%A7%E7%88%AC%E8%99%AB/

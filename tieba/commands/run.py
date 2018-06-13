@@ -59,6 +59,10 @@ class Command(crawl.Command):
         cfg = config.config()
         if len(args) >= 3:
             raise UsageError("Too many arguments!")
+            
+        for i in range(len(args)):
+            if isinstance(args[i], bytes):
+                args[i] = args[i].decode("utf8")
         
         self.settings.set('MYSQL_HOST', cfg.config['MYSQL_HOST'])
         self.settings.set('MYSQL_USER', cfg.config['MYSQL_USER'])
@@ -67,16 +71,13 @@ class Command(crawl.Command):
         tbname = cfg.config['DEFAULT_TIEBA']
         if len(args) >= 1:
             tbname = args[0]
-        if isinstance(tbname, unicode):
-            tbname = tbname.encode('utf8')
             
         dbname = None    
-        for key in cfg.config['MYSQL_DBNAME'].keys():
-            if key.encode('utf8') == tbname:
-                dbname = cfg.config['MYSQL_DBNAME'][key]
+        if tbname in cfg.config['MYSQL_DBNAME'].keys():
+            dbname = cfg.config['MYSQL_DBNAME'][tbname]
         if len(args) >= 2:
             dbname = args[1]
-            cfg.config['MYSQL_DBNAME'][tbname.decode('utf8')] = dbname
+            cfg.config['MYSQL_DBNAME'][tbname] = dbname
         if not dbname:
             raise UsageError("Please input database name!")
             
@@ -87,12 +88,7 @@ class Command(crawl.Command):
         
         log = config.log(tbname, dbname, self.settings['BEGIN_PAGE'], opts.good_only, opts.see_lz)
         self.settings.set('SIMPLE_LOG', log)
-        
         self.crawler_process.crawl('tieba', **opts.spargs)
         self.crawler_process.start()
         
         cfg.save()
-
-        
-            
-  

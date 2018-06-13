@@ -8,7 +8,7 @@
 from twisted.enterprise import adbapi
 import MySQLdb
 import MySQLdb.cursors
-from urllib import quote
+from six.moves.urllib.parse import quote
 from tieba.items import ThreadItem, PostItem, CommentItem
 
 class TiebaPipeline(object):
@@ -22,9 +22,7 @@ class TiebaPipeline(object):
         if not dbname.strip():
             raise ValueError("No database name!")
         if not tbname.strip():
-            raise ValueError("No tieba name!")          
-        if isinstance(tbname, unicode):
-            settings['TIEBA_NAME'] = tbname.encode('utf8')
+            raise ValueError("No tieba name!")    
 
         self.settings = settings
         
@@ -43,8 +41,11 @@ class TiebaPipeline(object):
         spider.end_page = self.settings['END_PAGE']
         spider.filter = self.settings['FILTER']
         spider.see_lz = self.settings['SEE_LZ']
+        tbname = self.settings['TIEBA_NAME']
+        if not isinstance(tbname, bytes):
+            tbname = tbname.encode('utf8')
         start_url = "http://tieba.baidu.com/f?kw=%s&pn=%d" \
-                %(quote(self.settings['TIEBA_NAME']), 50 * (begin_page - 1))
+                %(quote(tbname), 50 * (begin_page - 1))
         if self.settings['GOOD_ONLY']:
             start_url += '&tab=good'
         
