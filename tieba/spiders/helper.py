@@ -11,14 +11,18 @@ def is_ad(s): #判断楼层是否为广告
     # 广告楼层中间有个span含有广告俩字
     return ad
 
-def parse_content(content, is_post):
+def parse_content(content):
     if not content or not content.strip():
         return None
     content = content.replace('\r', '\n') #古老的帖子会出现奇怪的\r
-    s = BeautifulSoup(content, 'lxml').html.body
-    if is_post:
+    s = BeautifulSoup(content, 'lxml')
+    if s.html:
+        s=s.html
+    if s.body:
+        s=s.body
+    if s.div:
         s = s.div  #post 外层有个div
-    else:
+    if s.p:
         s = s.p
     l = list(s.children)
     for i in range(len(l)):

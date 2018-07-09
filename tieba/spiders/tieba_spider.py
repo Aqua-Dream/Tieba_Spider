@@ -54,7 +54,7 @@ class TiebaSpider(scrapy.Spider):
                     has_comment = True
                 content = floor.xpath(".//div[contains(@class,'j_d_post_content')]").extract_first()
                 #以前的帖子, data-field里面没有content
-                item['content'] = helper.parse_content(content, True)
+                item['content'] = helper.parse_content(content)
                 #以前的帖子, data-field里面没有thread_id
                 item['thread_id'] = meta['thread_id']
                 item['floor'] = data['content']['post_no']
@@ -86,7 +86,7 @@ class TiebaSpider(scrapy.Spider):
                 item['id'] = comment['comment_id']
                 item['author'] = comment['username']
                 item['post_id'] = comment['post_id']
-                item['content'] = helper.parse_content(comment['content'], False)
+                item['content'] = helper.parse_content(comment['content'])
                 item['time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(comment['now_time']))
                 yield item
          
