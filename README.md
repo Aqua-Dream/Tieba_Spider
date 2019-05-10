@@ -3,6 +3,8 @@
 
 贴吧爬虫。更新后请先删除原有的日志`spider.log`。
 
+注：根据[issue 9](https://github.com/Aqua-Dream/Tieba_Spider/issues/9)，**只会爬取楼中楼的第一页(目前为前10条回复)**。暂无修正计划。
+
 2018.6.13更新：新增支持python 3。请卸载原来的python库`mysql-python`，改为使用`mysqlclient`。
 
 2017.3.23更新：修改了页选项参数形式，增加了只看楼主、只爬精品和自定义过滤帖子功能。
