@@ -1,7 +1,8 @@
 # Tieba_Spider
 [Readme(CN)](README.md)
 
-Spider for [Baidu Tieba](https://tieba.baidu.com). Crawl threads, posts and comments, and store them into MySQL database.
+Spider for [Baidu Tieba](https://tieba.baidu.com). Crawl threads, posts and comments, and store them into MySQL database. DEMO: http://db.aqua.hk.cn (user/pwd: tieba/tieba)
+
 
 2018.6.13 Update: Now compatible for both python 2 and 3. Please remove python lib `mysql-python` and install `mysqlclient`.
 

@@ -1,7 +1,8 @@
 # Tieba_Spider
 [Readme(EN)](README_en.md)
 
-贴吧爬虫。更新后请先删除原有的日志`spider.log`。
+贴吧爬虫。DEMO: http://db.aqua.hk.cn (user/pwd: tieba/tieba)
+更新后请先删除原有的日志`spider.log`。
 
 注：根据[issue 9](https://github.com/Aqua-Dream/Tieba_Spider/issues/9)，**只会爬取楼中楼的第一页(目前为前10条回复)**。暂无修正计划。
 
