@@ -23,7 +23,8 @@ class TiebaSpider(scrapy.Spider):
             item['good'] = data['is_good']
             if not item['good']:
                 item['good'] = False
-            item['title'] = sel.xpath('.//div[contains(@class, "threadlist_title")]/a/text()').extract_first()
+            from scrapy.shell import inspect_response
+            item['title'] = sel.xpath('.//div[contains(@class, "threadlist_title")]/a/@title').extract_first()
             if self.filter and not self.filter(item["id"], item["title"], item['author'], item['reply_num'], item['good']):
                 continue
             #filter过滤掉的帖子及其回复均不存入数据库
