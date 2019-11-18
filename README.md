@@ -4,7 +4,9 @@
 贴吧爬虫。DEMO: http://db.aqua.hk.cn (user/pwd: tieba/tieba)
 更新后请先删除原有的日志`spider.log`。
 
-注：根据[issue 9](https://github.com/Aqua-Dream/Tieba_Spider/issues/9)，**只会爬取楼中楼的第一页(目前为前10条回复)**。暂无修正计划。
+注：
+ - 有些帖子目前概率性爬不到，我也没能找到原因，可以考虑多爬几次。
+ - 根据[issue 9](https://github.com/Aqua-Dream/Tieba_Spider/issues/9)，**只会爬取楼中楼的第一页(目前为前10条回复)**。暂无修正计划。
 
 2018.6.13更新：新增支持python 3。请卸载原来的python库`mysql-python`，改为使用`mysqlclient`。
 
