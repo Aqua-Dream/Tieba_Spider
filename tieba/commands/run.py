@@ -64,6 +64,9 @@ class Command(crawl.Command):
             if isinstance(args[i], bytes):
                 args[i] = args[i].decode("utf8")
         
+        if not 'MYSQL_PORT' in cfg.config.keys():
+            cfg.config['MYSQL_PORT'] = 3306
+        
         self.settings.set('MYSQL_HOST', cfg.config['MYSQL_HOST'])
         self.settings.set('MYSQL_USER', cfg.config['MYSQL_USER'])
         self.settings.set('MYSQL_PASSWD', cfg.config['MYSQL_PASSWD'])
