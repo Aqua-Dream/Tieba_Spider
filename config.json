@@ -6,5 +6,6 @@
         "风靡义磊": "fmyl"
     },
     "MYSQL_USER": "root",
-    "MYSQL_HOST": "localhost"
+    "MYSQL_HOST": "localhost",
+    "MYSQL_PORT": 3306
 }

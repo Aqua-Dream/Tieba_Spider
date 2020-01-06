@@ -64,10 +64,14 @@ class Command(crawl.Command):
             if isinstance(args[i], bytes):
                 args[i] = args[i].decode("utf8")
         
+        if not 'MYSQL_PORT' in cfg.config.keys():
+            cfg.config['MYSQL_PORT'] = 3306
+        
         self.settings.set('MYSQL_HOST', cfg.config['MYSQL_HOST'])
         self.settings.set('MYSQL_USER', cfg.config['MYSQL_USER'])
         self.settings.set('MYSQL_PASSWD', cfg.config['MYSQL_PASSWD'])
-        
+        self.settings.set('MYSQL_PORT', cfg.config['MYSQL_PORT'])
+
         tbname = cfg.config['DEFAULT_TIEBA']
         if len(args) >= 1:
             tbname = args[0]
@@ -84,7 +88,7 @@ class Command(crawl.Command):
         self.settings.set('TIEBA_NAME', tbname, priority='cmdline')
         self.settings.set('MYSQL_DBNAME', dbname, priority='cmdline')
         
-        config.init_database(cfg.config['MYSQL_HOST'], cfg.config['MYSQL_USER'], cfg.config['MYSQL_PASSWD'], dbname)
+        config.init_database(cfg.config['MYSQL_HOST'], cfg.config['MYSQL_USER'], cfg.config['MYSQL_PASSWD'],cfg.config['MYSQL_PORT'], dbname)
         
         log = config.log(tbname, dbname, self.settings['BEGIN_PAGE'], opts.good_only, opts.see_lz)
         self.settings.set('SIMPLE_LOG', log)

@@ -31,6 +31,7 @@ class TiebaPipeline(object):
             db=settings['MYSQL_DBNAME'],
             user=settings['MYSQL_USER'],
             passwd=settings['MYSQL_PASSWD'],
+            port=settings['MYSQL_PORT'],
             charset='utf8mb4',
             cursorclass = MySQLdb.cursors.DictCursor,
             init_command = 'set foreign_key_checks=0' #异步容易冲突

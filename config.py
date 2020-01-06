@@ -62,10 +62,10 @@ class log:
             f.write(s)
         
         
-def init_database(host, user, passwd, dbname):
+def init_database(host, user, passwd, port, dbname):
     warnings.filterwarnings('ignore', message = ".*exists.*")  
     warnings.filterwarnings('ignore', message = ".*looks like a.*") 
-    db = MySQLdb.connect(host, user, passwd)
+    db = MySQLdb.connect(host=host, user=user, passwd=passwd, port=port)
     tx = db.cursor()
     tx.execute('set names utf8mb4')
     tx.execute('create database if not exists `%s`default charset utf8mb4\
