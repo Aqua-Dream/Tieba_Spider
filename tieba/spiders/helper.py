@@ -80,7 +80,7 @@ def other_case(s):
 
 class RedirctHandler(request.HTTPRedirectHandler):      
     def http_error_302(self, req, fp, code, msg, headers):  
-        raise Exception(headers.getheaders('location')[0])
+        raise Exception(headers.get('location'))
 
 def getJumpUrl(url):    
     req = request.Request(url)  
