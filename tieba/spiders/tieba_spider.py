@@ -14,6 +14,7 @@ class TiebaSpider(scrapy.Spider):
     see_lz = False
     
     def parse(self, response): #forum parser
+        print("Crawling page %d..." % self.cur_page)
         for sel in response.xpath('//li[contains(@class, "j_thread_list")]'):
             data = json.loads(sel.xpath('@data-field').extract_first())
             item = ThreadItem()
