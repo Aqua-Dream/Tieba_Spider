@@ -16,5 +16,8 @@ ITEM_PIPELINES = {
 }
 
 LOG_LEVEL = 'WARNING'
+#LOG_LEVEL = 'INFO'
 
 COMMANDS_MODULE = 'tieba.commands'
+
+COOKIES_ENABLED = False

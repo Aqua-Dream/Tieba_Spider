@@ -34,7 +34,8 @@ class TiebaSpider(scrapy.Spider):
             url = 'http://tieba.baidu.com/p/%d' % data['id']
             if self.see_lz:
                 url += '?see_lz=1'
-            yield scrapy.Request(url, callback = self.parse_post,  meta = meta)
+            yield scrapy.Request(url, callback = self.parse_post,  meta = meta, 
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'})
         next_page = response.xpath('//a[@class="next pagination-item "]/@href')
         self.cur_page += 1
         if next_page:
@@ -71,12 +72,14 @@ class TiebaSpider(scrapy.Spider):
             url = "http://tieba.baidu.com/p/totalComment?tid=%d&fid=1&pn=%d" % (meta['thread_id'], meta['page'])
             if self.see_lz:
                 url += '&see_lz=1'
-            yield scrapy.Request(url, callback = self.parse_comment, meta = meta)
+            yield scrapy.Request(url, callback = self.parse_comment, meta = meta, 
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'})
         next_page = response.xpath(u".//ul[@class='l_posts_num']//a[text()='下一页']/@href")
         if next_page:
             meta['page'] += 1
             url = response.urljoin(next_page.extract_first())
-            yield scrapy.Request(url, callback = self.parse_post, meta = meta)
+            yield scrapy.Request(url, callback = self.parse_post, meta = meta, 
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36'})
 
     def parse_comment(self, response):
         comment_list = json.loads(response.body.decode('utf8'))['data']['comment_list']
