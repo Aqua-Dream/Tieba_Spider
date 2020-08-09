@@ -77,7 +77,7 @@ class TiebaPipeline(object):
         tx.execute(sql, params)
         
     def insert_comment(self, tx, item):
-        tx.execute('set names utf8mb4')
+        #tx.execute('set names utf8mb4') # seems to be redundant
         sql = "replace into comment values(%s, %s, %s, %s, %s)"
         params = (item["id"], item['author'], item['content'], item['time'], item['post_id'])
         tx.execute(sql, params)
