@@ -42,7 +42,7 @@ class TiebaSpider(scrapy.Spider):
         self.cur_page += 1
         if next_page:
             if self.cur_page <= self.end_page:
-                yield self.make_requests_from_url('http:'+next_page.extract_first())
+                yield scrapy.Request('http:'+next_page.extract_first())
             
     def parse_post(self, response): 
         meta = response.meta
