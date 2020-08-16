@@ -19,6 +19,8 @@ class TiebaSpider(scrapy.Spider):
         print("Crawling page %d..." % self.cur_page)
         for sel in response.xpath('//li[contains(@class, "j_thread_list")]'):
             data = json.loads(sel.xpath('@data-field').extract_first())
+            if data['id'] == 1: # 去掉"本吧吧主火热招募"
+                continue
             item = ThreadItem()
             item['id'] = data['id']
             item['author'] = data['author_name']
