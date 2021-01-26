@@ -3,8 +3,6 @@
 
 Spider for [Baidu Tieba](https://tieba.baidu.com). Crawl threads, posts and comments, and store them into MySQL database. 
 
-DEMO: http://db.aqua.hk.cn (user/pwd: tieba/tieba)
-
 ## Dependency
 Python >= 2.7 || >= 3.5
 
