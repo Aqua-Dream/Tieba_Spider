@@ -1,7 +1,7 @@
 # Tieba_Spider
 [Readme(EN)](README_en.md)
 
-贴吧爬虫。DEMO: http://db.aqua.hk.cn (user/pwd: tieba/tieba)
+贴吧爬虫。
 
 
 ## 依赖参考
