@@ -4,13 +4,13 @@
 Spider for [Baidu Tieba](https://tieba.baidu.com). Crawl threads, posts and comments, and store them into MySQL database. 
 
 ## Dependency
-Python >= 2.7 || >= 3.5
+Python >= 3.6
 
 mysql >= 5.5
 
 beautifulsoup4 >= 4.6.0
 
-scrapy >= 1.5
+scrapy >= 2.4
 
 mysqlclient >= 1.3.10
 

@@ -1,10 +1,10 @@
-import scrapy.commands.crawl as crawl
 from scrapy.exceptions import UsageError
 from scrapy.commands import ScrapyCommand
 import config
 import filter
+from scrapy.utils.conf import arglist_to_dict
 
-class Command(crawl.Command):
+class Command(ScrapyCommand):
     def syntax(self):
         return "<tieba_name> <database_name>"
 
@@ -18,11 +18,6 @@ class Command(crawl.Command):
         ScrapyCommand.add_options(self, parser)
         parser.add_option("-a", dest="spargs", action="append", default=[], metavar="NAME=VALUE",
                           help="set spider argument (may be repeated)")
-        parser.add_option("-o", "--output", metavar="FILE",
-                          help="dump scraped items into FILE (use - for stdout)")
-        parser.add_option("-t", "--output-format", metavar="FORMAT",
-                          help="format to use for dumping items with -o")
-                          
         parser.add_option("-p", "--pages", nargs = 2, type="int", dest="pages", default=[],
                           help="set the range of pages you want to crawl")  
         parser.add_option("-g", "--good", action="store_true", dest="good_only", default=False,
@@ -48,6 +43,10 @@ class Command(crawl.Command):
 
     def run(self, args, opts):
         self.set_pages(opts.pages)
+        try:
+            opts.spargs = arglist_to_dict(opts.spargs)
+        except ValueError:
+            raise UsageError("Invalid -a value, use -a NAME=VALUE", print_help=False)
         self.settings.set('GOOD_ONLY', opts.good_only)
         self.settings.set('SEE_LZ', opts.see_lz)
         if opts.filter:

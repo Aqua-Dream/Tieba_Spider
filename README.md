@@ -5,13 +5,13 @@
 
 
 ## 依赖参考
-Python >= 2.7 || >= 3.5
+Python >= 3.6
 
 mysql >= 5.5
 
 beautifulsoup4 >= 4.6.0
 
-scrapy >= 1.5
+scrapy >= 2.4
 
 mysqlclient >= 1.3.10
 
