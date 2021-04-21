@@ -89,6 +89,8 @@ class TiebaSpider(scrapy.Spider):
     def parse_totalComment(self, response):
         meta = response.meta.copy()
         comment_list = json.loads(response.text)['data']['comment_list']
+        if not comment_list:
+            return
         for value in comment_list.values():
             comments = value['comment_info']
             for comment in comments:
