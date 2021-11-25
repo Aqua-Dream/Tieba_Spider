@@ -11,7 +11,7 @@ mysql >= 5.5
 
 beautifulsoup4 >= 4.6.0
 
-scrapy >= 2.4
+**scrapy == 2.4.1**
 
 mysqlclient >= 1.3.10
 
